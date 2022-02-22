@@ -41,6 +41,8 @@ local sensors = {}
 
 local lidars = {}
 
+local ultrasonics = {}
+
 local objectCount = 1
 
 local debugLines = {}
@@ -678,10 +680,10 @@ end
 sensors.Ultrasonic = function(req, sendSensorData)
   local sensorPos, sensorRot
 
-  local sensorOffset = req['pos']
+  local sensorOffset = req['pos_offset']
   sensorOffset = vec3(sensorOffset[1], sensorOffset[2], sensorOffset[3])
 
-  sensorRot = req['rot']
+  sensorRot = req['rot_offset']
   sensorRot = vec3(sensorRot[1], sensorRot[2], sensorRot[3])
   if req['vehicle'] then
     local pos, rot = computeAbsoluteSensorPosRot(req['vehicle'], sensorOffset, sensorRot)
@@ -702,6 +704,7 @@ sensors.Ultrasonic = function(req, sendSensorData)
   near_far = Point2F(near_far[1], near_far[2])
 
   local dist = Engine.getUltrasonicDistanceMeasurement(sensorPos, sensorRot, resolution, fov, near_far)
+
   local measurement = {distance = dist}
   sendSensorData(measurement)
 
@@ -710,9 +713,9 @@ sensors.Ultrasonic = function(req, sendSensorData)
 end
 
 M.handleStartUSSensorVisualization = function(skt, msg)
-  local sensorOffset = msg['pos']
+  local sensorOffset = msg['pos_offset']
   sensorOffset = vec3(sensorOffset[1], sensorOffset[2], sensorOffset[3])
-  local sensorRot = msg['rot']
+  local sensorRot = msg['rot_offset']
   sensorRot = vec3(sensorRot[1], sensorRot[2], sensorRot[3])
   local color = msg.color
   color = ColorF(color[1], color[2], color[3], color[4])
@@ -922,6 +925,49 @@ M.handleCloseLidar = function(skt, msg)
     lidars[name] = nil
   end
   rcom.sendACK(skt, 'ClosedLidar')
+end
+
+M.handleOpenUltrasonic = function(skt, msg)
+  local vid = msg['vid']
+  local name = msg['name']
+  local resolution = msg['resolution']
+  local fov = msg['fov']
+  local near_far = msg['near_far']
+  local po = msg['po']
+  local pn = msg['pn']
+  local pl = msg['pl']
+  local pa = msg['pa']
+  local ps = msg['ps']
+  local pd = msg['pd']
+  local sensitivity = msg['sensitivity']
+  local fixed_window_size = msg['fixed_window_size']
+  local pos_offset = msg['pos_offset']
+  local rot_offset = msg['rot_offset']
+
+  local ultrasonic_sensor = ultrasonic.ULTRASONIC( 
+    scenetree.findObject(vid):getID(),              -- vehicle ID (integer).
+    resolution[1], resolution[2],                   -- sensor resolution/depth buffer size.
+    fov,                                            -- sensor field of view (single float).
+    near_far[1], near_far[2],                       -- sensor near/far plane (two floats).
+    po, pn, pl, pa, ps, pd,                         -- sensor range shape parameters.
+    sensitivity, fixed_window_size,                 -- sensor sensitivity parameters.
+    pos_offset[1], pos_offset[2], pos_offset[3],    -- sensor position offset (x, y, z).
+    rot_offset[1], rot_offset[2], rot_offset[3])    -- sensor rotational offset angles(x, y, z).
+    ultrasonic_sensor:open()
+    ultrasonic_sensor:enabled(true)
+  ultrasonics[name] = ultrasonic_sensor
+
+  rcom.sendACK(skt, 'OpenedUltrasonic')
+end
+
+M.handleCloseUltrasonic = function(skt, msg)
+  local name = msg['name']
+  local ultrasonic = ultrasonics[name]
+  if ultrasonic ~= nil then
+    ultrasonic:close()
+    ultrasonics[name] = nil
+  end
+  rcom.sendACK(skt, 'ClosedUltrasonic')
 end
 
 M.handleSetWeatherPreset = function(skt, msg)

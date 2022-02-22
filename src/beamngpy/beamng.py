@@ -778,6 +778,67 @@ class BeamNGpy:
         self.send(data)
         self.logger.info(f'Closed lidar: "{name}"')
 
+    @ack('OpenedUltrasonic')
+    def open_ultrasonic(self, name, vehicle, pos_offset=(0.0, -1.0, 0.0), rot_offset=(0.0, 0.0, 0.0), 
+                        resolution=(256, 128), fov=0.3, near_far=(0.1, 0.5), po=-1.15, pn=0.0, pl=0.3, pa=0.376, 
+                        ps=0.1, pd=10.6, sensitivity=3.0, fixed_window_size=10.0):
+        """
+        Opens an ultrasonic sensor instance in the simulator with the given parameters. 
+        The ultrasonic instance has to be assigned a unique name that is later used for
+        closing.
+
+        Args:
+            name (str): The name of the ultrasonic sensor instance to open. Has to be
+                        unique relative to other ultrasonic sensors currently opened.
+            vehicle (:class:`.Vehicle`): The vehicle this ultrasonic sensor is attached to.
+            pos_offset (tuple): (X, Y, Z) coordinate triplet specifying the
+                            position of the sensor relative to the vehicle's.
+            rot_offset (tuple): (X, Y, Z) coordinate triple specifying the direction the ultrasonic 
+                               sensor, relative to the vehicle's.
+            resolution (tuple): (X, Y) the resolution of the ultrasonic sensor.
+            fov (float): the ultrasonic sensor field of view.
+            near_far (tuple): (X, Y) the ultrasonic sensor near and far plane distances.
+            po (float): the ultrasonic sensor range-shape parameter PO.
+            pn (float): the ultrasonic sensor range-shape parameter PN.
+            pl (float): the ultrasonic sensor range-shape parameter PL.
+            pa (float): the ultrasonic sensor range-shape parameter PA.
+            ps (float): the ultrasonic sensor range-shape parameter PS.
+            pd (float): the ultrasonic sensor range-shape parameter PD.
+            sensitivity (float): an ultrasonic sensor sensitivity parameter.
+            fixed_window_size (float): an ultrasonic sensor sensitivity parameter.
+        """
+        data = dict(type='OpenUltrasonic')
+        data['name'] = name
+        data['vid'] = vehicle.vid
+        data['pos_offset'] = pos_offset
+        data['rot_offset'] = rot_offset
+        data['resolution'] = resolution
+        data['fov'] = fov
+        data['near_far'] = near_far
+        data['po'] = po
+        data['pn'] = pn
+        data['pl'] = pl
+        data['pa'] = pa
+        data['ps'] = ps
+        data['pd'] = pd
+        data['sensitivity'] = sensitivity
+        data['fixed_window_size'] = fixed_window_size
+        self.send(data)
+        self.logger.info(f'Opened ultrasonic sensor: "{name}')
+
+    @ack('ClosedUltrasonic')
+    def close_ultrasonic(self, name):
+        """
+        Closes the ultrasonic sensor instance of the given name in the simulator.
+
+        Args:
+            name (str): The name of the ultrasonic sensor instance to close.
+        """
+        data = dict(type='CloseUltrasonic')
+        data['name'] = name
+        self.send(data)
+        self.logger.info(f'Closed ultrasonic sensor: "{name}"')
+
     def teleport_vehicle(self, vehicle_id, pos, rot=None, rot_quat=None):
         """
         Teleports the given vehicle to the given position with the given

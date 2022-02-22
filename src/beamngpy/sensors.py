@@ -1216,29 +1216,86 @@ class Ultrasonic(Sensor):
     """
 
     def __init__(self,
-                 pos,
-                 rot,
+                 pos_offset,
+                 rot_offset = (0, 0, 0),
+                 resolution=(256, 128),
                  fov=(70, 35),
-                 min_resolution=256,
-                 near_far=(0.15, 5.5)):
+                 near_far=(0.15, 5.5),
+                 po=-1.15,
+                 pn=0.0,
+                 pl=0.3,
+                 pa=0.376,
+                 ps=0.1,
+                 pd=10.6,
+                 sensitivity=3.0,
+                 fixed_window_size=10.0):
         self.logger = getLogger(f'{LOGGER_ID}.Ultrasonic')
         self.logger.setLevel(DBG_LOG_LEVEL)
-        self.pos = pos
-        self.rot = rot
+        self.pos_offset = pos_offset
+        self.rot_offset = rot_offset
+        self.resolution = (resolution[0], resolution[1])
         self.fov = fov[0]
-        res_height = int(min_resolution/fov[0]*fov[1])
-        self.resolution = (min_resolution, res_height)
         self.near_far = near_far
+        self.po = po
+        self.pn = pn
+        self.pl = pl
+        self.pa = pa
+        self.ps = ps
+        self.pd = pd
+        self.sensitivity = sensitivity
+        self.fixed_window_size = fixed_window_size
+        self.handle = None
         self.vis_spec = None
 
     def encode_engine_request(self):
         req = dict(type='Ultrasonic')
-        req['pos'] = self.pos
-        req['rot'] = self.rot
+        req['pos_offset'] = self.pos_offset
+        req['rot_offset'] = self.rot_offset
         req['fov'] = self.fov
         req['resolution'] = self.resolution
         req['near_far'] = self.near_far
+        req['po'] = self.po
+        req['pn'] = self.pn
+        req['pl'] = self.pl
+        req['pa'] = self.pa
+        req['ps'] = self.ps
+        req['pd'] = self.pd
+        req['sensitivity'] = self.sensitivity
+        req['fixed_window_size'] = self.fixed_window_size
         return req
+
+    def connect(self, bng, vehicle):
+        bng.open_ultrasonic(self.handle, vehicle, pos_offset=self.pos_offset, rot_offset=self.rot_offset, 
+                            resolution = self.resolution, fov = self.fov,
+                            near_far = self.near_far, po = self.po, pn = self.pn, pl = self.pl, pa = self.pa,
+                            ps = self.ps, pd = self.pd, sensitivity = self.sensitivity, 
+                            fixed_window_size = self.fixed_window_size)
+						   
+    def disconnect(self, bng, vehicle):
+        bng.close_ultrasonic(self.handle)
+
+    def attach(self, vehicle, name):
+        """
+        Called when the ultrasonic sensor is attached to a vehicle.
+
+        Args:
+            vehicle (:class:`.Vehicle`): The vehicle the sensor is being
+                                         attached to.
+            name (str): The name of the sensor.
+        """
+        pid = os.getpid()
+        self.handle = '{}.{}.{}.ultrasonic'.format(pid, vehicle.vid, name)
+
+    def detach(self, vehicle, name):
+        """
+        Called when the ultrasonic sensor is detached from a vehicle.
+
+        Args:
+            vehicle (:class:`.Vehicle`): The vehicle the sensor is being
+                                         detached from.
+            name (str): The name of the sensor.
+        """
+        pass
 
     def startVisualization(self, bng, vehicle_id, color, radius=.1):
         """
@@ -1254,8 +1311,8 @@ class Ultrasonic(Sensor):
         """
         req = dict(type='StartUSSensorVisualization')
         req['vehicle'] = vehicle_id
-        req['pos'] = self.pos
-        req['rot'] = self.rot
+        req['pos_offset'] = self.pos_offset
+        req['rot_offset'] = self.rot_offset
         req['color'] = color
         req['radius'] = radius
         req['lineLength'] = self.near_far[1]
