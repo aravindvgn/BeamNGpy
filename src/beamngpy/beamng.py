@@ -780,8 +780,8 @@ class BeamNGpy:
 
     @ack('OpenedUltrasonic')
     def open_ultrasonic(self, name, vehicle, pos_offset=(0.0, -1.0, 0.0), rot_offset=(0.0, 0.0, 0.0), 
-                        resolution=(256, 128), fov=0.3, near_far=(0.1, 0.5), po=-1.15, pn=0.0, pl=0.3, pa=0.376, 
-                        ps=0.1, pd=10.6, sensitivity=3.0, fixed_window_size=10.0):
+                        resolution=(256, 128), fov=0.3, near_far=(0.1, 0.5), range_roundness=-1.15, range_cutoff_sensitivity=0.0, range_shape=0.3, 
+                        range_focus=0.376, range_min_cutoff=0.1, range_direct_max_cutoff=10.6, sensitivity=3.0, fixed_window_size=10.0):
         """
         Opens an ultrasonic sensor instance in the simulator with the given parameters. 
         The ultrasonic instance has to be assigned a unique name that is later used for
@@ -798,12 +798,12 @@ class BeamNGpy:
             resolution (tuple): (X, Y) the resolution of the ultrasonic sensor.
             fov (float): the ultrasonic sensor field of view.
             near_far (tuple): (X, Y) the ultrasonic sensor near and far plane distances.
-            po (float): the ultrasonic sensor range-shape parameter PO.
-            pn (float): the ultrasonic sensor range-shape parameter PN.
-            pl (float): the ultrasonic sensor range-shape parameter PL.
-            pa (float): the ultrasonic sensor range-shape parameter PA.
-            ps (float): the ultrasonic sensor range-shape parameter PS.
-            pd (float): the ultrasonic sensor range-shape parameter PD.
+            range_roundness (float): the general roudness of the ultrasonic sensor range-shape. Can be negative.
+            range_cutoff_sensitivity (float): a cutoff sensitivity parameter for the ultrasonic sensor range-shape.
+            range_shape (float): the shape of the ultrasonic sensor range-shape in [0, 1], from conical to circular.
+            range_focus (float): the focus parameter for the ultrasonic sensor range-shape.
+            range_min_cutoff (float): the minimum cut-off distance for the ultrasonic sensor range-shape. Nothing closer than this will be detected.
+            range_direct_max_cutoff (float): the maximum cut-off distance for the ultrasonic sensor range-shape. Nothing further than this will be detected.
             sensitivity (float): an ultrasonic sensor sensitivity parameter.
             fixed_window_size (float): an ultrasonic sensor sensitivity parameter.
         """
@@ -815,12 +815,12 @@ class BeamNGpy:
         data['resolution'] = resolution
         data['fov'] = fov
         data['near_far'] = near_far
-        data['po'] = po
-        data['pn'] = pn
-        data['pl'] = pl
-        data['pa'] = pa
-        data['ps'] = ps
-        data['pd'] = pd
+        data['range_roundness'] = range_roundness
+        data['range_cutoff_sensitivity'] = range_cutoff_sensitivity
+        data['range_shape'] = range_shape
+        data['range_focus'] = range_focus
+        data['range_min_cutoff'] = range_min_cutoff
+        data['range_direct_max_cutoff'] = range_direct_max_cutoff
         data['sensitivity'] = sensitivity
         data['fixed_window_size'] = fixed_window_size
         self.send(data)
