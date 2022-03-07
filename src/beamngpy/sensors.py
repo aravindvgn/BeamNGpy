@@ -1220,7 +1220,7 @@ class Ultrasonic(Sensor):
                  rot_offset = (0, 0, 0),
                  resolution=(200, 200),
                  fov=(70, 35),
-                 near_far=(0.15, 5.5),
+                 near_far=(0.15, 0.15),
                  range_roundness=-1.15,
                  range_cutoff_sensitivity=0.0,
                  range_shape=0.3,
@@ -1234,7 +1234,7 @@ class Ultrasonic(Sensor):
         self.pos_offset = pos_offset
         self.rot_offset = rot_offset
         self.resolution = (resolution[0], resolution[1])
-        self.fov = fov[0]
+        self.fov = fov
         self.near_far = near_far
         self.range_roundness = range_roundness
         self.range_cutoff_sensitivity = range_cutoff_sensitivity

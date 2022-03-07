@@ -949,19 +949,19 @@ M.handleOpenUltrasonic = function(skt, msg)
   local rot_offset = msg['rot_offset']
 
   local ultrasonic_sensor = ultrasonic.ULTRASONIC( 
-    scenetree.findObject(vid):getID(),              -- vehicle ID (integer).
+    scenetree.findObject(vid):getID(),              -- vehicle ID (int).
     resolution[1], resolution[2],                   -- sensor resolution/depth buffer size.
-    fov,                                            -- sensor field of view (single float).
-    near_far[1], near_far[2],                       -- sensor near/far plane (two floats).
-    range_roundness,                                -- sensor range shape parameters.
+    fov[1], fov[2],                                 -- sensor field of view (X, Y) (float).
+    near_far[1], near_far[2],                       -- sensor near/far plane (X, Y) (float).
+    range_roundness,                                -- sensor range shape parameters (float).
     range_cutoff_sensitivity, 
     range_shape, 
     range_focus, 
     range_min_cutoff, 
     range_direct_max_cutoff,
-    sensitivity, fixed_window_size,                 -- sensor sensitivity parameters.
-    pos_offset[1], pos_offset[2], pos_offset[3],    -- sensor position offset (x, y, z).
-    rot_offset[1], rot_offset[2], rot_offset[3])    -- sensor rotational offset angles(x, y, z).
+    sensitivity, fixed_window_size,                 -- sensor sensitivity parameters (float).
+    pos_offset[1], pos_offset[2], pos_offset[3],    -- sensor position offset (x, y, z) (float).
+    rot_offset[1], rot_offset[2], rot_offset[3])    -- sensor rotational offset angles(x, y, z) (float).
     ultrasonic_sensor:open()
     ultrasonic_sensor:enabled(true)
   ultrasonics[name] = ultrasonic_sensor

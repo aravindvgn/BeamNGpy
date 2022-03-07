@@ -796,7 +796,7 @@ class BeamNGpy:
             rot_offset (tuple): (X, Y, Z) coordinate triple specifying the direction the ultrasonic 
                                sensor, relative to the vehicle's.
             resolution (tuple): (X, Y) the resolution of the ultrasonic sensor.
-            fov (float): the ultrasonic sensor field of view.
+            fov (float): (X, Y) the ultrasonic sensor field of view parameters.
             near_far (tuple): (X, Y) the ultrasonic sensor near and far plane distances.
             range_roundness (float): the general roudness of the ultrasonic sensor range-shape. Can be negative.
             range_cutoff_sensitivity (float): a cutoff sensitivity parameter for the ultrasonic sensor range-shape.
