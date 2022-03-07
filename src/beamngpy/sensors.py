@@ -1217,7 +1217,8 @@ class Ultrasonic(Sensor):
 
     def __init__(self,
                  pos_offset,
-                 rot_offset = (0, 0, 0),
+                 rot_offset_1 = (0, 1, 0),
+                 rot_offset_2 = (0, 1, 0),
                  resolution=(200, 200),
                  fov=(70, 35),
                  near_far=(0.15, 0.15),
@@ -1232,7 +1233,8 @@ class Ultrasonic(Sensor):
         self.logger = getLogger(f'{LOGGER_ID}.Ultrasonic')
         self.logger.setLevel(DBG_LOG_LEVEL)
         self.pos_offset = pos_offset
-        self.rot_offset = rot_offset
+        self.rot_offset_1 = rot_offset_1
+        self.rot_offset_2 = rot_offset_2
         self.resolution = (resolution[0], resolution[1])
         self.fov = fov
         self.near_far = near_far
@@ -1250,7 +1252,8 @@ class Ultrasonic(Sensor):
     def encode_engine_request(self):
         req = dict(type='Ultrasonic')
         req['pos_offset'] = self.pos_offset
-        req['rot_offset'] = self.rot_offset
+        req['rot_offset_1'] = self.rot_offset_1
+        req['rot_offset_2'] = self.rot_offset_2
         req['fov'] = self.fov
         req['resolution'] = self.resolution
         req['near_far'] = self.near_far
@@ -1265,12 +1268,14 @@ class Ultrasonic(Sensor):
         return req
 
     def connect(self, bng, vehicle):
-        bng.open_ultrasonic(self.handle, vehicle, pos_offset=self.pos_offset, rot_offset=self.rot_offset, 
+        bng.open_ultrasonic(self.handle, vehicle, pos_offset=self.pos_offset, 
+                            rot_offset_1=self.rot_offset_1, rot_offset_2=self.rot_offset_2, 
                             resolution = self.resolution, fov = self.fov,
                             near_far = self.near_far, range_roundness = self.range_roundness, 
                             range_cutoff_sensitivity = self.range_cutoff_sensitivity, 
                             range_shape = self.range_shape, range_focus = self.range_focus,
-                            range_min_cutoff = self.range_min_cutoff, range_direct_max_cutoff = self.range_direct_max_cutoff, 
+                            range_min_cutoff = self.range_min_cutoff, 
+                            range_direct_max_cutoff = self.range_direct_max_cutoff, 
                             sensitivity = self.sensitivity, fixed_window_size = self.fixed_window_size)
 						   
     def disconnect(self, bng, vehicle):
@@ -1314,7 +1319,6 @@ class Ultrasonic(Sensor):
         req = dict(type='StartUSSensorVisualization')
         req['vehicle'] = vehicle_id
         req['pos_offset'] = self.pos_offset
-        req['rot_offset'] = self.rot_offset
         req['color'] = color
         req['radius'] = radius
         req['lineLength'] = self.near_far[1]

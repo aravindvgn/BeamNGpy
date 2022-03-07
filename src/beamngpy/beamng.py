@@ -779,7 +779,7 @@ class BeamNGpy:
         self.logger.info(f'Closed lidar: "{name}"')
 
     @ack('OpenedUltrasonic')
-    def open_ultrasonic(self, name, vehicle, pos_offset=(0.0, -1.0, 0.0), rot_offset=(0.0, 0.0, 0.0), 
+    def open_ultrasonic(self, name, vehicle, pos_offset=(0.0, -1.0, 0.0), rot_offset_1=(0.0, 1.0, 0.0), rot_offset_2=(0.0, 0.0, 1.0),
                         resolution=(256, 128), fov=0.3, near_far=(0.05, 10.0), range_roundness=-1.15, range_cutoff_sensitivity=0.0, range_shape=0.3, 
                         range_focus=0.376, range_min_cutoff=0.1, range_direct_max_cutoff=10.6, sensitivity=3.0, fixed_window_size=10.0):
         """
@@ -788,13 +788,12 @@ class BeamNGpy:
         closing.
 
         Args:
-            name (str): The name of the ultrasonic sensor instance to open. Has to be
-                        unique relative to other ultrasonic sensors currently opened.
+            name (str): The name of the ultrasonic sensor instance to open. Has to be unique relative to other ultrasonic sensors currently opened.
             vehicle (:class:`.Vehicle`): The vehicle this ultrasonic sensor is attached to.
-            pos_offset (tuple): (X, Y, Z) coordinate triplet specifying the
-                            position of the sensor relative to the vehicle's.
-            rot_offset (tuple): (X, Y, Z) coordinate triple specifying the direction the ultrasonic 
-                               sensor, relative to the vehicle's.
+            pos_offset (tuple): (X, Y, Z) coordinate triplet specifying the position of the sensor relative to the vehicle's.
+            rot_offset_1 (tuple): (X, Y, Z) coordinate triplet specifying the direction of the ultrasonic sensor, relative to the vehicle's.
+            rot_offset_2 (tuple): (X, Y, Z) coordinate triplet specifying a vector perpendicular to the ultrasonic sensor direction vector. 
+                It is best to provide both vectors in order to keep the camera aligned. (0, 0, 1) is usually good for the second rot_offset vector.
             resolution (tuple): (X, Y) the resolution of the ultrasonic sensor.
             fov (float): (X, Y) the ultrasonic sensor field of view parameters.
             near_far (tuple): (X, Y) the ultrasonic sensor near and far plane distances.
@@ -803,7 +802,8 @@ class BeamNGpy:
             range_shape (float): the shape of the ultrasonic sensor range-shape in [0, 1], from conical to circular.
             range_focus (float): the focus parameter for the ultrasonic sensor range-shape.
             range_min_cutoff (float): the minimum cut-off distance for the ultrasonic sensor range-shape. Nothing closer than this will be detected.
-            range_direct_max_cutoff (float): the maximum cut-off distance for the ultrasonic sensor range-shape. Nothing further than this will be detected.
+            range_direct_max_cutoff (float): the maximum cut-off distance for the ultrasonic sensor range-shape. 
+                This parameter is a hard cutoff - nothing further than this will be detected, although other parameters can also control the max distance.
             sensitivity (float): an ultrasonic sensor sensitivity parameter.
             fixed_window_size (float): an ultrasonic sensor sensitivity parameter.
         """
@@ -811,7 +811,8 @@ class BeamNGpy:
         data['name'] = name
         data['vid'] = vehicle.vid
         data['pos_offset'] = pos_offset
-        data['rot_offset'] = rot_offset
+        data['rot_offset_1'] = rot_offset_1
+        data['rot_offset_2'] = rot_offset_2
         data['resolution'] = resolution
         data['fov'] = fov
         data['near_far'] = near_far
