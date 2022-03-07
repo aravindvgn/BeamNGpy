@@ -521,11 +521,15 @@ end
 
 local function getVehiclePosRot(vid)
   local veh = scenarioHelper.getVehicleByName(vid)
-  local rot = vec3(veh:getDirectionVector())
-  local up = vec3(veh:getDirectionVectorUp())
-  local rot = quatFromDir(rot, up)
-  local position = vec3(veh:getPosition())
-  return {pos = position, rot = rot}
+  if veh ~= nil then
+    local rot = vec3(veh:getDirectionVector())
+    local up = vec3(veh:getDirectionVectorUp())
+    local rot = quatFromDir(rot, up)
+    local position = vec3(veh:getPosition())
+    return {pos = position, rot = rot}
+  else
+    return {}
+  end
 end
 
 sensors.Camera = function(req, callback)
@@ -933,12 +937,12 @@ M.handleOpenUltrasonic = function(skt, msg)
   local resolution = msg['resolution']
   local fov = msg['fov']
   local near_far = msg['near_far']
-  local po = msg['po']
-  local pn = msg['pn']
-  local pl = msg['pl']
-  local pa = msg['pa']
-  local ps = msg['ps']
-  local pd = msg['pd']
+  local range_roundness = msg['range_roundness']
+  local range_cutoff_sensitivity = msg['range_cutoff_sensitivity']
+  local range_shape = msg['range_shape']
+  local range_focus = msg['range_focus']
+  local range_min_cutoff = msg['range_min_cutoff']
+  local range_direct_max_cutoff = msg['range_direct_max_cutoff']
   local sensitivity = msg['sensitivity']
   local fixed_window_size = msg['fixed_window_size']
   local pos_offset = msg['pos_offset']
@@ -949,7 +953,12 @@ M.handleOpenUltrasonic = function(skt, msg)
     resolution[1], resolution[2],                   -- sensor resolution/depth buffer size.
     fov,                                            -- sensor field of view (single float).
     near_far[1], near_far[2],                       -- sensor near/far plane (two floats).
-    po, pn, pl, pa, ps, pd,                         -- sensor range shape parameters.
+    range_roundness,                                -- sensor range shape parameters.
+    range_cutoff_sensitivity, 
+    range_shape, 
+    range_focus, 
+    range_min_cutoff, 
+    range_direct_max_cutoff,
     sensitivity, fixed_window_size,                 -- sensor sensitivity parameters.
     pos_offset[1], pos_offset[2], pos_offset[3],    -- sensor position offset (x, y, z).
     rot_offset[1], rot_offset[2], rot_offset[3])    -- sensor rotational offset angles(x, y, z).

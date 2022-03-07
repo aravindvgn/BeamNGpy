@@ -1218,15 +1218,15 @@ class Ultrasonic(Sensor):
     def __init__(self,
                  pos_offset,
                  rot_offset = (0, 0, 0),
-                 resolution=(256, 128),
+                 resolution=(200, 200),
                  fov=(70, 35),
                  near_far=(0.15, 5.5),
-                 po=-1.15,
-                 pn=0.0,
-                 pl=0.3,
-                 pa=0.376,
-                 ps=0.1,
-                 pd=10.6,
+                 range_roundness=-1.15,
+                 range_cutoff_sensitivity=0.0,
+                 range_shape=0.3,
+                 range_focus=0.376,
+                 range_min_cutoff=0.1,
+                 range_direct_max_cutoff=10.6,
                  sensitivity=3.0,
                  fixed_window_size=10.0):
         self.logger = getLogger(f'{LOGGER_ID}.Ultrasonic')
@@ -1236,12 +1236,12 @@ class Ultrasonic(Sensor):
         self.resolution = (resolution[0], resolution[1])
         self.fov = fov[0]
         self.near_far = near_far
-        self.po = po
-        self.pn = pn
-        self.pl = pl
-        self.pa = pa
-        self.ps = ps
-        self.pd = pd
+        self.range_roundness = range_roundness
+        self.range_cutoff_sensitivity = range_cutoff_sensitivity
+        self.range_shape = range_shape
+        self.range_focus = range_focus
+        self.range_min_cutoff = range_min_cutoff
+        self.range_direct_max_cutoff = range_direct_max_cutoff
         self.sensitivity = sensitivity
         self.fixed_window_size = fixed_window_size
         self.handle = None
@@ -1254,12 +1254,12 @@ class Ultrasonic(Sensor):
         req['fov'] = self.fov
         req['resolution'] = self.resolution
         req['near_far'] = self.near_far
-        req['po'] = self.po
-        req['pn'] = self.pn
-        req['pl'] = self.pl
-        req['pa'] = self.pa
-        req['ps'] = self.ps
-        req['pd'] = self.pd
+        req['range_roundness'] = self.range_roundness
+        req['range_cutoff_sensitivity'] = self.range_cutoff_sensitivity
+        req['range_shape'] = self.range_shape
+        req['range_focus'] = self.range_focus
+        req['range_min_cutoff'] = self.range_min_cutoff
+        req['range_direct_max_cutoff'] = self.range_direct_max_cutoff
         req['sensitivity'] = self.sensitivity
         req['fixed_window_size'] = self.fixed_window_size
         return req
@@ -1267,9 +1267,11 @@ class Ultrasonic(Sensor):
     def connect(self, bng, vehicle):
         bng.open_ultrasonic(self.handle, vehicle, pos_offset=self.pos_offset, rot_offset=self.rot_offset, 
                             resolution = self.resolution, fov = self.fov,
-                            near_far = self.near_far, po = self.po, pn = self.pn, pl = self.pl, pa = self.pa,
-                            ps = self.ps, pd = self.pd, sensitivity = self.sensitivity, 
-                            fixed_window_size = self.fixed_window_size)
+                            near_far = self.near_far, range_roundness = self.range_roundness, 
+                            range_cutoff_sensitivity = self.range_cutoff_sensitivity, 
+                            range_shape = self.range_shape, range_focus = self.range_focus,
+                            range_min_cutoff = self.range_min_cutoff, range_direct_max_cutoff = self.range_direct_max_cutoff, 
+                            sensitivity = self.sensitivity, fixed_window_size = self.fixed_window_size)
 						   
     def disconnect(self, bng, vehicle):
         bng.close_ultrasonic(self.handle)
