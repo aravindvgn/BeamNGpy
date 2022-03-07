@@ -780,7 +780,7 @@ class BeamNGpy:
 
     @ack('OpenedUltrasonic')
     def open_ultrasonic(self, name, vehicle, pos_offset=(0.0, -1.0, 0.0), rot_offset=(0.0, 0.0, 0.0), 
-                        resolution=(256, 128), fov=0.3, near_far=(0.1, 0.5), range_roundness=-1.15, range_cutoff_sensitivity=0.0, range_shape=0.3, 
+                        resolution=(256, 128), fov=0.3, near_far=(0.05, 10.0), range_roundness=-1.15, range_cutoff_sensitivity=0.0, range_shape=0.3, 
                         range_focus=0.376, range_min_cutoff=0.1, range_direct_max_cutoff=10.6, sensitivity=3.0, fixed_window_size=10.0):
         """
         Opens an ultrasonic sensor instance in the simulator with the given parameters. 
